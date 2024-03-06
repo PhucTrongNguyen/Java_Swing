@@ -26,7 +26,7 @@ public class Bai8 extends javax.swing.JFrame {
     String filename = "employees1.txt";
     Vector<String> header = new Vector<String>();
     Vector data = new Vector();
-    boolean addNew = false;
+    boolean addNew = true;
     boolean changed = false;
     
     public Bai8() {
@@ -200,6 +200,11 @@ public class Bai8 extends javax.swing.JFrame {
         jPanel2.add(btnRemove);
 
         btnSaveToFile.setText("Save to file");
+        btnSaveToFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveToFileActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnSaveToFile);
 
         btnSave.setText("Save");
@@ -211,6 +216,11 @@ public class Bai8 extends javax.swing.JFrame {
         jPanel2.add(btnSave);
 
         btnExit.setText("Exit");
+        btnExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExitActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnExit);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -252,20 +262,12 @@ public class Bai8 extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNameActionPerformed
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        try {
-            File f = new File(filename);
-            PrintWriter pf = new PrintWriter(f);
-            int n = this.tableEmp.getRowCount();
-            for (int i = 0; i < n; i++) {
-                Vector<String> v = (Vector<String>) (data.get(i));
-                String S = v.get(0) + "," + v.get(1) + "," + v.get(2);
-                pf.println(S);
-            }
-            pf.close();
-            changed=false;
-        }catch(Exception e) {
-            JOptionPane.showMessageDialog(this, e);
-        }
+        this.addNew = true;
+        this.txtCode.setText("");
+        this.txtCode.setEditable(true);
+        this.txtName.setText("");
+        this.txtSalary.setText("");
+        this.txtCode.requestFocus();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
@@ -298,7 +300,7 @@ public class Bai8 extends javax.swing.JFrame {
     }//GEN-LAST:event_tableEmpMouseClicked
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        if (!valid()) return;
+        //if (false) return;
         String code = txtCode.getText();
         String name = txtName.getText();
         String salaryStr = txtSalary.getText();
@@ -320,13 +322,39 @@ public class Bai8 extends javax.swing.JFrame {
         changed = true;
     }//GEN-LAST:event_btnSaveActionPerformed
 
+    private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
+        if (changed == true) {
+            if (JOptionPane.showConfirmDialog(this, "Data changed. Save Y/N?")==JOptionPane.OK_OPTION)
+                btnSaveToFileActionPerformed(null);
+        }
+        System.exit(0);
+    }//GEN-LAST:event_btnExitActionPerformed
+
+    private void btnSaveToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveToFileActionPerformed
+        try {
+            File f = new File(filename);
+            PrintWriter pf = new PrintWriter(f);
+            int n = this.tableEmp.getRowCount();
+            for (int i = 0; i < n; i++) {
+                Vector<String> v = (Vector<String>)(data.get(i));
+                String S = v.get(0) + "," + v.get(1) + "," + v.get(2);
+                pf.println(S);
+            }
+            pf.close();
+            changed=false;
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
+    }//GEN-LAST:event_btnSaveToFileActionPerformed
+
     private boolean valid() {
         if (txtCode.getText().compareTo("") == 0 
                 || txtName.getText().compareTo("") == 0
                 || txtSalary.getText().compareTo("") == 0) {
             return true;
         }
-        return false;
+        else 
+            return false;
     }
     /**
      * @param args the command line arguments

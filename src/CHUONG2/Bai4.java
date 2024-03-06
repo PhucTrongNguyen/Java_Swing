@@ -20,17 +20,15 @@ public class Bai4 extends javax.swing.JFrame implements ActionListener{
     /**
      * Creates new form Bai4
      */
-    private static ArrayList<JButton> list = new ArrayList<JButton>();
-    private String number1 = "";
-    private String operation = "";
-    private String number2 = "";
+    private static ArrayList<JButton> list = new ArrayList<>();
     private int index = 0;
-    private int length = 1;
-    private String[] number = new String[length];
+    private ArrayList<String> number = new ArrayList<>();
+    private ArrayList<String> operator = new ArrayList<>();
     
     public Bai4() {
         initComponents();
         setLocationRelativeTo(null);
+        number.add("");
         for (int i = 0; i < jPanel2.getComponentCount(); i++) {
             list.add((JButton) jPanel2.getComponent(i));
         }
@@ -43,15 +41,6 @@ public class Bai4 extends javax.swing.JFrame implements ActionListener{
         Timer timer = new Timer(delay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                for (JButton button : list) {
-//                    if (e.getSource() == button) {
-//                        System.out.println("" + button.getText() + " is Pressed");
-//                        txt0.setText("" + button.getText());
-//                    }
-//                    else {
-//                        System.out.println("" + button.getText() + " not is Pressed");
-//                    }
-//                }
             }
             
         });
@@ -226,9 +215,10 @@ public class Bai4 extends javax.swing.JFrame implements ActionListener{
     }//GEN-LAST:event_formWindowActivated
 
     private void btnCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCActionPerformed
-        number1 = "";
-        number2 = "";
         txt0.setText("0");
+        number.clear();
+        operator.clear();
+        number.add("");
     }//GEN-LAST:event_btnCActionPerformed
 
     /**
@@ -306,59 +296,162 @@ public class Bai4 extends javax.swing.JFrame implements ActionListener{
                     && e.getSource() != btnChiaDu
                     && e.getSource() != btnChiaX
                     && e.getSource() != btnCongTru) {
-                if (operation.compareTo("") != 0) {
-                    number2 += button.getText();
-                    number[index] += String.valueOf(button.getText());
-                    txt0.setText(number2);
+                if (number.get(index).isEmpty()) {
+                    number.set(index, button.getText());
+                    txt0.setText(number.get(index));
                 }
                 else {
-                    number1 += button.getText();
-                    number[index] += String.valueOf(button.getText());
-                    txt0.setText(number1);
+                    if (number.get(index).isEmpty()) {
+                        number.set(index, button.getText());
+                        txt0.setText(number.get(index));
+                    }
+                    else {
+                        number.set(index, number.get(index) + button.getText());
+                        txt0.setText(number.get(index));
+                    }
                 }
-                System.out.println("Number 1: " + number1);
-                System.out.println("Number 2: " + number2);
                 System.out.println("Number array: " + number);
             }
             
         }
         if (e.getSource() == btnBang) {
-            if (operation.compareTo("") != 0) {
-                switch(operation) {
-                    case "+":
-                        txt0.setText(String.valueOf(Integer.parseInt(number1) + Integer.parseInt(number2)));
-                        operation = "";
-                        break;
-                    case "-":
-                        txt0.setText(String.valueOf(Integer.parseInt(number1) - Integer.parseInt(number2)));
-                        operation = "";
-                        break;
-                    case "*":
-                        txt0.setText(String.valueOf(Integer.parseInt(number1) * Integer.parseInt(number2)));
-                        operation = "";
-                        break;
-                    case "/":
-                        txt0.setText(String.valueOf((float)Integer.parseInt(number1) / Integer.parseInt(number2)));
-                        operation = "";
-                        break;
-                    case "%":
-                        txt0.setText(String.valueOf((float)Integer.parseInt(number1) % Integer.parseInt(number2)));
-                        operation = "";
-                        break;
-                    default:
-                        break;
+            if (number.get(index) != null && operator.get(index-1) != null) {
+                for (int i = 0; i < operator.size(); i++) {
+                    if (operator.get(i).compareTo("*") == 0) {
+                        number.set(i, String.valueOf(Integer.parseInt(number.get(i)) * Integer.parseInt(number.get(i+1))));
+                        number.remove(i+1);
+                        operator.remove(i);
+                        for (int j = i; j < number.size(); j++) {
+                            if (number.get(j) == null) {
+                                number.set(j, number.get(j+1));
+                            }
+                        }
+                        for (int j = i; j < operator.size(); j++) {
+                            if (operator.get(j) == null) {
+                                operator.set(j, operator.get(j+1));
+                            }
+                        }
+                    }
                 }
+                for (int i = 0; i < operator.size(); i++) {
+                    if (operator.get(i).compareTo("/") == 0) {
+                        number.set(i, String.valueOf((float)Integer.parseInt(number.get(i)) / Integer.parseInt(number.get(i+1))));
+                        number.remove(i+1);
+                        operator.remove(i);
+                        for (int j = i; j < number.size(); j++) {
+                            if (number.get(j) == null) {
+                                number.set(j, number.get(j+1));
+                            }
+                        }
+                        for (int j = i; j < operator.size(); j++) {
+                            if (operator.get(j) == null) {
+                                operator.set(j, operator.get(j+1));
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < operator.size(); i++) {
+                    if (operator.get(i).compareTo("+") == 0) {
+                        number.set(i, String.valueOf(Integer.parseInt(number.get(i)) + Integer.parseInt(number.get(i+1))));
+                        number.remove(i+1);
+                        operator.remove(i);
+                        for (int j = i; j < number.size(); j++) {
+                            if (number.get(j) == null) {
+                                number.set(j, number.get(j+1));
+                            }
+                        }
+                        for (int j = i; j < operator.size(); j++) {
+                            if (operator.get(j) == null) {
+                                operator.set(j, operator.get(j+1));
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < operator.size(); i++) {
+                    if (operator.get(i).compareTo("-") == 0) {
+                        number.set(i, String.valueOf(Integer.parseInt(number.get(i)) - Integer.parseInt(number.get(i+1))));
+                        number.remove(i+1);
+                        operator.remove(i);
+                        for (int j = i; j < number.size(); j++) {
+                            if (number.get(j) == null) {
+                                number.set(j, number.get(j+1));
+                            }
+                        }
+                        for (int j = i; j < operator.size(); j++) {
+                            if (operator.get(j) == null) {
+                                operator.set(j, operator.get(j+1));
+                            }
+                        }
+                    }
+                }
+                txt0.setText(number.get(0));
+                index = 0;
             }
         }
 
         if (e.getSource() == btnCong) {
-            txt0.setText("+");
-            operation = btnCong.getText();
-            index++;
+            if (number.get(index).isEmpty() == false) {
+                operator.add(btnCong.getText());
+                txt0.setText(operator.get(index));
+                index++;
+                number.add("");
+                System.out.println("Operation: " + operator);
+            }
+            else if (index > 0 
+                    && number.get(index).isEmpty()
+                    && operator.get(index-1).isEmpty() == false) {
+                operator.set(index-1, btnCong.getText());
+                txt0.setText(operator.get(index-1));
+                System.out.println("Operation: " + operator);
+            }
         }
         else if (e.getSource() == btnTru) {
-            txt0.setText("-");
-            operation = btnCong.getText();
+            if (number.get(index).isEmpty() == false) {
+                operator.add(btnTru.getText());
+                txt0.setText(operator.get(index));
+                index++;
+                number.add("");
+                System.out.println("Operation: " + operator);
+            }
+            else if (index > 0 
+                    && number.get(index).isEmpty()
+                    && operator.get(index-1).isEmpty() == false) {
+                operator.set(index-1, btnTru.getText());
+                txt0.setText(operator.get(index-1));
+                System.out.println("Operation: " + operator);
+            }
+        }
+        else if (e.getSource() == btnNhan) {
+            if (number.get(index).isEmpty() == false) {
+                operator.add(btnNhan.getText());
+                txt0.setText(operator.get(index));
+                index++;
+                number.add("");
+                System.out.println("Operation: " + operator);
+            }
+            else if (index > 0 
+                    && number.get(index).isEmpty()
+                    && operator.get(index-1).isEmpty() == false) {
+                operator.set(index-1, btnNhan.getText());
+                txt0.setText(operator.get(index-1));
+                System.out.println("Operation: " + operator);
+            }
+        }
+        else if (e.getSource() == btnChia) {
+            if (number.get(index).isEmpty() == false) {
+                operator.add(btnChia.getText());
+                txt0.setText(operator.get(index));
+                index++;
+                number.add("");
+                System.out.println("Operation: " + operator);
+            }
+            else if (index > 0 
+                    && number.get(index).isEmpty()
+                    && operator.get(index-1).isEmpty() == false) {
+                operator.set(index-1, btnChia.getText());
+                txt0.setText(operator.get(index-1));
+                System.out.println("Operation: " + operator);
+            }
         }
     }
 }
